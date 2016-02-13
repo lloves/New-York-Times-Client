@@ -20,6 +20,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.neverbendeasy.newyorktimes.Article;
 import com.neverbendeasy.newyorktimes.ArticleArrayAdapter;
+import com.neverbendeasy.newyorktimes.EndlessScrollListener;
 import com.neverbendeasy.newyorktimes.R;
 
 import org.json.JSONArray;
@@ -57,6 +58,14 @@ public class SearchActivity extends AppCompatActivity {
         articles = new ArrayList<>();
         adapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(adapter);
+
+        gvResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                customLoadMoreDataFromApi(page);
+                return true;
+            }
+        });
 
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -139,17 +148,57 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    public void refreshData() {
+    public void customLoadMoreDataFromApi(int offset) {
+        String query = etQuery.getText().toString();
 
-//        In the future it would make sense to have a refresh function to auto-update the stream
-        
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String beginDate = pref.getString("date", "");
+        String sortSetting = pref.getString("sortOrder", "");
+        String newsDeskString = pref.getString("newsDesk", "");
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
+        RequestParams params = new RequestParams();
+        params.put("api-key", "a14da2188514faff29d638a5dbb8c88b:13:74375067");
+        params.put("page", offset);
+
+        if (!beginDate.isEmpty()) {
+            params.put("begin_date", beginDate);
+        }
+
+        if (!sortSetting.isEmpty()) {
+            params.put("sort", sortSetting);
+        }
+
+        if (!newsDeskString.isEmpty()) {
+            params.put("fq", "news_desk:(" + newsDeskString + ")");
+        }
+
+        params.put("q", query);
+
+        client.get(url, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG", response.toString());
+                JSONArray articleJsonResults = null;
+
+                try {
+                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                    adapter.addAll(Article.fromJSONArray(articleJsonResults));
+                    Log.d("DEBUG", articles.toString());
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-
-            refreshData();
+            // use this to refresh data in the future
         }
     }
 }
