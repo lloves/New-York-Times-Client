@@ -44,7 +44,6 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         setupViews();
-
     }
 
     public void setupViews() {
@@ -65,6 +64,7 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
     }
 
     @Override
@@ -83,6 +83,8 @@ public class SearchActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent i = new Intent(SearchActivity.this, SettingsActivity.class);
+            startActivity(i);
             return true;
         }
 

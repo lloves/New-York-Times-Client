@@ -4,4 +4,6 @@
     <string name="hint">Search for articles...</string>
     <string name="searchButtonText">Search</string>
     <string name="title_activity_article">ArticleActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="dateLabel">Begin Date</string>
 </resources>
