@@ -6,4 +6,12 @@
     <string name="title_activity_article">ArticleActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="dateLabel">Begin Date</string>
+    <string name="sortString">Sort Order</string>
+    <string name="sortTextOn">Newest</string>
+    <string name="sortTextOff">Oldest</string>
+    <string name="newsDeskText">News Desk Values</string>
+    <string name="arts">Arts</string>
+    <string name="fashion"><![CDATA[Fashion & Style]]></string>
+    <string name="sports">Sports</string>
+    <string name="save">Save</string>
 </resources>
