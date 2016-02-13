@@ -1,6 +1,9 @@
 package com.neverbendeasy.newyorktimes.activities;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -10,21 +13,12 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ToggleButton;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.neverbendeasy.newyorktimes.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Locale;
-
-import cz.msebera.android.httpclient.Header;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -103,32 +97,17 @@ public class SettingsActivity extends AppCompatActivity {
 
         String newsDeskString = TextUtils.join(" ", newsDeskList);
 
-        String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.put("api-key", "a14da2188514faff29d638a5dbb8c88b:13:74375067");
-        params.put("fq", "news_desk:(" + newsDeskString + ")");
-        params.put("sort", tbSort.getText());
-        params.put("page", 0);
-        params.put("begin_date", stringDate);
-        params.put("q", "tennis");
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString("date", stringDate);
+        edit.putString("sortOrder", tbSort.getText().toString());
+        edit.putString("newsDesk", "news_desk:(" + newsDeskString + ")");
+        edit.commit();
 
-        client.get(url, params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                JSONArray articleJsonResults = null;
-
-                try {
-                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-
-                    // Save preferences here
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        Intent data = new Intent();
+        data.putExtra("code", 200);
+        setResult(RESULT_OK, data);
+        finish();
     }
+
 }

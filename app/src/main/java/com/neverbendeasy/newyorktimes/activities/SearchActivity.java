@@ -1,7 +1,9 @@
 package com.neverbendeasy.newyorktimes.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -36,6 +38,8 @@ public class SearchActivity extends AppCompatActivity {
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
 
+    private final int REQUEST_CODE = 200;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +64,6 @@ public class SearchActivity extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
                 Article article = articles.get(position);
                 i.putExtra("article", article);
-
                 startActivity(i);
             }
         });
@@ -84,7 +87,7 @@ public class SearchActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent i = new Intent(SearchActivity.this, SettingsActivity.class);
-            startActivity(i);
+            startActivityForResult(i, REQUEST_CODE);
             return true;
         }
 
@@ -94,11 +97,28 @@ public class SearchActivity extends AppCompatActivity {
     public void onArticleSearch(View view) {
         String query = etQuery.getText().toString();
 
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String beginDate = pref.getString("date", "");
+        String sortSetting = pref.getString("sortOrder", "");
+        String newsDeskString = pref.getString("newsDesk", "");
+
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
         RequestParams params = new RequestParams();
         params.put("api-key", "a14da2188514faff29d638a5dbb8c88b:13:74375067");
-        params.put("page", 0);
+
+        if (!beginDate.isEmpty()) {
+            params.put("begin_date", beginDate);
+        }
+
+        if (!sortSetting.isEmpty()) {
+            params.put("sort", sortSetting);
+        }
+
+        if (!newsDeskString.isEmpty()) {
+            params.put("fq", "news_desk:(" + newsDeskString + ")");
+        }
+
         params.put("q", query);
 
         client.get(url, params, new JsonHttpResponseHandler() {
@@ -117,5 +137,19 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void refreshData() {
+
+//        In the future it would make sense to have a refresh function to auto-update the stream
+        
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+
+            refreshData();
+        }
     }
 }
