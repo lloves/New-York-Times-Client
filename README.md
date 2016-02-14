@@ -50,7 +50,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Various challenges: Setting up the check boxes was challenging, I probably wouldn't use this UI in a production app, I would probably set them up as "tags" that the user can search, select, and then see that they are selected in the main screen.
 
 ## Open-source libraries used
 
