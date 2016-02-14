@@ -42,7 +42,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-![Video Walkthrough](http://imgur.com/6By8cTR)
+![Video Walkthrough](https://github.com/neverbendeasy/New-York-Times-Client/blob/master/NYT1.gif)
+
+This video is also hosted on IMGUR: http://imgur.com/6By8cTR
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
